@@ -1,8 +1,14 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
+import { useMemo } from 'react';
+import type { NextPage } from 'next';
+import Head from 'next/head';
 
+import { trpc } from '@/utils/trpc';
 
 const Home: NextPage = () => {
+  const { data, isLoading } = trpc.useQuery(['get-search-position', { query: 'You Tube' }]);
+
+  const renderResoultsList = useMemo(() => data?.map(({ link }) => <li key={link}>{link}</li>), [data]);
+
   return (
     <section>
       <Head>
@@ -11,8 +17,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <p>Hello World.</p>
-    </section>
-  )
-}
 
-export default Home
+      {isLoading ? <span>Loading</span> : renderResoultsList}
+    </section>
+  );
+};
+
+export default Home;
